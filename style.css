@@ -1,0 +1,140 @@
+:root {
+    --grid-width: 399px;
+    --grid-height: 800px;
+    --block-width: 40px;
+    --block-height: 40px;
+    --mini-block-width: 40px;
+    --mini-block-height: 40px;
+    --mini-grid-width: 160px;
+    --mini-grid-height: 160px;
+}
+
+*,
+*::before,
+*::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: radial-gradient(circle at 20%, #f23333, #f233ef, #339cf2, #33f286);
+    background-size: 1000%, 1000%;
+    animation: gradient-bg 15s ease-in-out infinite;
+}
+
+.container {
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game {
+    display: grid;
+    grid-template-columns: var(--grid-width) 210px;
+    grid-template-rows: 400px 400px;
+    grid-column-gap: 10px;
+}
+
+.game-grid {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    border: 1px solid white;
+}
+
+.game-grid div {
+    width: var(--block-width);
+    height: var(--block-height);
+    border-radius: 4px;
+}
+
+.game-grid div.base {
+    background-color: black;
+    height: 0;
+}
+
+.block {
+    width: var(--block-width);
+    height: var(--block-height);
+    border: 1px solid black;
+    border-radius: 8px;
+}
+
+.scorepad {
+    grid-column-start: 2;
+    grid-column-end: 3;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    border-radius: 8px;
+    border: 1px solid lightgray;
+}
+
+.scorepad > .score,
+.score-title {
+    padding-top: 20px;
+    color: white;
+    font-weight: 100;
+}
+
+.scorepad > .score {
+    font-size: 3em;
+    font-weight: 100;
+}
+
+.mini-grid {
+    width: var(--mini-grid-width);
+    height: var(--mini-grid-height);
+    display: flex;
+    flex-wrap: wrap;
+    background-color: var(--grid-color);
+}
+
+.mini-grid div {
+    width: var(--mini-block-width);
+    height: var(--mini-block-height);
+}
+
+#start-stop {
+    padding: 10px;
+    background-color: #f23333;
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+#start-stop:hover {
+    filter: invert(100%);
+}
+
+@keyframes gradient-bg {
+    0% {
+        background-position: 0, 30%;
+    }
+
+    25% {
+        background-position: 50%, 90%;
+    }
+
+    50% {
+        background-position: 100%, 50%;
+    }
+
+    75% {
+        background-position: 50%, 10%;
+    }
+
+    100% {
+        background-position: 0, 30%;
+    }
+}

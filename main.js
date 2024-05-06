@@ -98,8 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const GAME_GRID_COLUMNS = 10;
     const GAME_GRID_ROWS = 20;
-    const GAME_GRID_SQUARES = GAME_GRID_COLUMNS * GAME_GRID_ROWS;
-    const PREVIEW_GRID_SQUARES = 16;
+    const GAME_GRID_CELLS = GAME_GRID_COLUMNS * GAME_GRID_ROWS;
+    const PREVIEW_GRID_CELLS = 16;
 
     const START_POSITION = 4;
     const START_ROTATION = 0;
@@ -110,12 +110,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const startStop = document.getElementById("start-stop");
 
     let gameGrid;
-    let squares;
-    let previewSquares;
+    let cells;
+    let previewCells;
 
     const createGameGrid = () => {
         gameGrid = document.getElementById("game-grid");
-        for (let i = 0; i < GAME_GRID_SQUARES; i++) {
+        for (let i = 0; i < GAME_GRID_CELLS; i++) {
             const div = document.createElement("div");
             gameGrid.appendChild(div);
         }
@@ -125,18 +125,18 @@ document.addEventListener("DOMContentLoaded", () => {
             div.className = "taken base";
             gameGrid.appendChild(div);
         }
-        squares = Array.from(document.querySelectorAll("#game-grid div"));
+        cells = Array.from(document.querySelectorAll("#game-grid div"));
     };
 
     const createPreviewGrid = () => {
         const previewGrid = document.getElementById("preview-grid");
 
-        for (let i = 0; i < PREVIEW_GRID_SQUARES; i++) {
+        for (let i = 0; i < PREVIEW_GRID_CELLS; i++) {
             const div = document.createElement("div");
             previewGrid.appendChild(div);
         }
 
-        previewSquares = document.querySelectorAll("#preview-grid div");
+        previewCells = document.querySelectorAll("#preview-grid div");
     };
 
     createGameGrid();
@@ -153,53 +153,53 @@ document.addEventListener("DOMContentLoaded", () => {
     let score = 0;
 
     const draw = () => {
-        updateBlock((square) => {
-            square.classList.add("block");
-            square.style.backgroundColor = COLORS[random];
+        updateBlock((cell) => {
+            cell.classList.add("cell");
+            cell.style.backgroundColor = COLORS[random];
         });
     };
 
     const undraw = () => {
-        updateBlock((square) => {
-            square.classList.remove("block");
-            square.style.backgroundColor = "";
+        updateBlock((cell) => {
+            cell.classList.remove("cell");
+            cell.style.backgroundColor = "";
         });
     };
 
     const updateBlock = (updater) => {
         block.forEach((index) => {
-            const square = squares[currentPosition + index];
-            updater(square);
+            const cell = cells[currentPosition + index];
+            updater(cell);
         });
     };
 
     const drawPreview = () => {
-        previewSquares.forEach((square) => {
-            square.className = "";
-            square.style = "";
+        previewCells.forEach((cell) => {
+            cell.className = "";
+            cell.style = "";
         });
 
         previewBlock.forEach((index) => {
-            previewSquares[index].classList.add("block");
-            previewSquares[index].style.backgroundColor = COLORS[nextRandom];
+            previewCells[index].classList.add("cell");
+            previewCells[index].style.backgroundColor = COLORS[nextRandom];
         });
     };
 
     const addScore = () => {
-        for (let i = 0; i < GAME_GRID_SQUARES; i += GAME_GRID_COLUMNS) {
-            const row = Array.from({ length: GAME_GRID_COLUMNS }, (_, index) => i + index);
+        for (let i = 0; i < GAME_GRID_CELLS; i += GAME_GRID_COLUMNS) {
+            const row = Array.from({length: GAME_GRID_COLUMNS}, (_, index) => i + index);
 
-            if (row.every((index) => squares[index].classList.contains("taken"))) {
+            if (row.every((index) => cells[index].classList.contains("taken"))) {
                 score += 10;
                 scoreDisplay.innerHTML = `${score}`;
                 row.forEach((index) => {
-                    squares[index].classList.remove("taken");
-                    squares[index].classList.remove("block");
-                    squares[index].style.backgroundColor = "";
+                    cells[index].classList.remove("taken");
+                    cells[index].classList.remove("cell");
+                    cells[index].style.backgroundColor = "";
                 });
-                const squaresRemoved = squares.splice(i, WIDTH);
-                squares = squaresRemoved.concat(squares);
-                squares.forEach((square) => gameGrid.appendChild(square));
+                const cellsRemoved = cells.splice(i, WIDTH);
+                cells = cellsRemoved.concat(cells);
+                cells.forEach((cell) => gameGrid.appendChild(cell));
             }
         }
     };
@@ -223,8 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const lockBlock = () => {
-        if (block.some((index) => squares[currentPosition + index + WIDTH].classList.contains("taken"))) {
-            block.forEach((index) => squares[currentPosition + index].classList.add("taken"));
+        if (block.some((index) => cells[currentPosition + index + WIDTH].classList.contains("taken"))) {
+            block.forEach((index) => cells[currentPosition + index].classList.add("taken"));
             addScore();
             newBlock();
             intervalMillis = START_INTERVAL_MILLIS;
@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     function isBlockCollision() {
-        return block.some((index) => squares[currentPosition + index].classList.contains("taken"));
+        return block.some((index) => cells[currentPosition + index].classList.contains("taken"));
     }
 
     const isGameOver = () => {

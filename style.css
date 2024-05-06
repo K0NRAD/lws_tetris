@@ -17,12 +17,11 @@ body {
 }
 
 .container {
-    width: 100vw;
-    height: 100vh;
-
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100vw;
+    height: 100vh;
 }
 
 .game {
@@ -40,11 +39,10 @@ body {
 }
 
 #game-grid div.base {
-    background-color: black;
     height: 0;
 }
 
-.block {
+.cell {
     border: 1px solid black;
     border-radius: 4px;
 }
@@ -57,8 +55,8 @@ body {
     padding: 0 2rem;
     margin: auto;
     margin-top: 0;
-    border-radius: 6px;
     border: 1px solid lightgray;
+    border-radius: 6px;
 }
 
 .scorepad > .score,

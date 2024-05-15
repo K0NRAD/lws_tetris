@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const START_POSITION = 4;
     const START_ROTATION = 0;
     const START_INTERVAL_MILLIS = 1000;
+    const END_INTERVAL_MILLIS = 100;
     const DROP_INTERVAL_MILLIS = 20;
 
     const scoreDisplay = document.getElementById("score");
@@ -149,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let nextRandom;
     let block;
     let previewBlock;
+    let isRunning = false;
 
     let score = 0;
 
@@ -187,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const addScore = () => {
         for (let i = 0; i < GAME_GRID_CELLS; i += GAME_GRID_COLUMNS) {
-            const row = Array.from({length: GAME_GRID_COLUMNS}, (_, index) => i + index);
+            const row = Array.from({ length: GAME_GRID_COLUMNS }, (_, index) => i + index);
 
             if (row.every((index) => cells[index].classList.contains("taken"))) {
                 score += 10;
@@ -227,7 +229,13 @@ document.addEventListener("DOMContentLoaded", () => {
             block.forEach((index) => cells[currentPosition + index].classList.add("taken"));
             addScore();
             newBlock();
-            intervalMillis = START_INTERVAL_MILLIS;
+            if (intervalMillis === DROP_INTERVAL_MILLIS) {
+                intervalMillis = previousIntervalMillis;
+            }
+            if (intervalMillis > END_INTERVAL_MILLIS) {
+                intervalMillis -= 50;
+            }
+            console.log(intervalMillis);
         }
     };
 
@@ -236,6 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isOnLeftEdge()) currentPosition--;
         if (isBlockCollision()) currentPosition++;
         draw();
+        lockBlock();
     };
 
     const moveRight = () => {
@@ -243,6 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isOnRightEdge()) currentPosition++;
         if (isBlockCollision()) currentPosition--;
         draw();
+        lockBlock();
     };
 
     const moveDown = () => {
@@ -314,6 +324,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     moveRight();
                     break;
                 case " ":
+                    if (intervalMillis !== DROP_INTERVAL_MILLIS) {
+                        previousIntervalMillis = intervalMillis;
+                    }
                     intervalMillis = DROP_INTERVAL_MILLIS;
                     break;
                 default:
@@ -327,9 +340,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let timerId = null;
     let lastTime = 0;
     let intervalMillis = START_INTERVAL_MILLIS;
+    let previousIntervalMillis = START_INTERVAL_MILLIS;
 
     const gameLoop = (currentTime) => {
-        if (lastTime > 0) {
+        if (isRunning && lastTime > 0) {
             if (currentTime - lastTime > intervalMillis) {
                 moveDown();
                 lastTime = currentTime;
@@ -344,13 +358,15 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     startStop.addEventListener("click", () => {
-        if (timerId) {
-            cancelAnimationFrame(timerId);
-            timerId = null;
+        if (isRunning) {
+            isRunning = false;
         } else {
-            newBlock();
-            intervalMillis = START_INTERVAL_MILLIS;
-            timerId = requestAnimationFrame(gameLoop);
+            if (!timerId) {
+                newBlock();
+                intervalMillis = START_INTERVAL_MILLIS;
+                timerId = requestAnimationFrame(gameLoop);
+            }
+            isRunning = true;
         }
     });
 });

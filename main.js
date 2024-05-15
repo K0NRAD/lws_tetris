@@ -207,9 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 score += 10;
                 scoreDisplay.innerHTML = `${score}`;
                 row.forEach((index) => {
-                    cells[index].classList.remove("taken");
-                    cells[index].classList.remove("cell");
-                    cells[index].style.backgroundColor = "";
+                    cells[index].removeAttribute("style");
+                    cells[index].removeAttribute("class");
                 });
                 const cellsRemoved = cells.splice(i, WIDTH);
                 cells = cellsRemoved.concat(cells);
@@ -245,7 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 intervalMillis = previousIntervalMillis;
             }
             if (intervalMillis > END_INTERVAL_MILLIS) {
-                intervalMillis -= 50;
+                intervalMillis -= 25;
             }
             console.log(intervalMillis);
         }
@@ -316,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const isGameOver = () => {
         if (currentPosition < WIDTH && isBlockCollision()) {
             scoreDisplay.innerHTML = "game over";
+            startStop.removeAttribute("style");
             return true;
         }
         return false;
@@ -375,6 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
             newBlock();
             intervalMillis = START_INTERVAL_MILLIS;
             timerId = requestAnimationFrame(gameLoop);
+            startStop.style.visibility = "hidden";
         }
     });
 });

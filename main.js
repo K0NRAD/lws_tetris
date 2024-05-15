@@ -147,10 +147,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentRotation = START_ROTATION;
 
     let random;
-    let nextRandom;
+    let previewRandom;
     let block;
     let previewBlock;
-    let isRunning = false;
 
     let score = 0;
 
@@ -163,8 +162,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const undraw = () => {
         updateBlock((cell) => {
-            cell.classList.remove("cell");
-            cell.style.backgroundColor = "";
+            cell.removeAttribute("class");
+            cell.removeAttribute("style");
         });
     };
 
@@ -177,14 +176,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const drawPreview = () => {
         previewCells.forEach((cell) => {
-            cell.className = "";
-            cell.style = "";
+            cell.removeAttribute("class");
+            cell.removeAttribute("style");
         });
 
         previewBlock.forEach((index) => {
             previewCells[index].classList.add("cell");
-            previewCells[index].style.backgroundColor = COLORS[nextRandom];
+            previewCells[index].style.backgroundColor = COLORS[previewRandom];
         });
+    };
+
+    const resetGame = () => {
+        for (let i = 0; i < GAME_GRID_CELLS; i++) {
+            const cell = cells[i];
+            cell.removeAttribute("class");
+            cell.removeAttribute("style");
+        }
+        score = 0;
+        scoreDisplay.innerHTML = score;
+        lastTime = 0;
+        intervalMillis = START_INTERVAL_MILLIS;
+        previousIntervalMillis = START_INTERVAL_MILLIS;
     };
 
     const addScore = () => {
@@ -210,8 +222,8 @@ document.addEventListener("DOMContentLoaded", () => {
         currentPosition = START_POSITION;
         currentRotation = START_ROTATION;
 
-        random = nextRandom || Math.floor(Math.random() * blocks.length);
-        nextRandom = Math.floor(Math.random() * blocks.length);
+        random = previewRandom || Math.floor(Math.random() * blocks.length);
+        previewRandom = Math.floor(Math.random() * blocks.length);
 
         block = blocks[random][currentRotation];
         if (isGameOver()) {
@@ -219,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
             timerId = null;
         } else {
             draw();
-            previewBlock = previewBlocks[nextRandom];
+            previewBlock = previewBlocks[previewRandom];
             drawPreview();
         }
     }
@@ -343,7 +355,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let previousIntervalMillis = START_INTERVAL_MILLIS;
 
     const gameLoop = (currentTime) => {
-        if (isRunning && lastTime > 0) {
+        if (lastTime > 0) {
             if (currentTime - lastTime > intervalMillis) {
                 moveDown();
                 lastTime = currentTime;
@@ -358,15 +370,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     startStop.addEventListener("click", () => {
-        if (isRunning) {
-            isRunning = false;
-        } else {
-            if (!timerId) {
-                newBlock();
-                intervalMillis = START_INTERVAL_MILLIS;
-                timerId = requestAnimationFrame(gameLoop);
-            }
-            isRunning = true;
+        if (!timerId) {
+            resetGame();
+            newBlock();
+            intervalMillis = START_INTERVAL_MILLIS;
+            timerId = requestAnimationFrame(gameLoop);
         }
     });
 });
